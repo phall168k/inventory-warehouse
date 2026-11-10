@@ -16,6 +16,8 @@
     "outDir": "./dist",
     "paths": {
       "@/*": ["./src/*"],
+      "@common/*": ["./src/common/*"],
+      "@utils/*": ["./src/common/utils/*"],
       "@database/*": ["./src/database/*"],
       "@modules/*": ["./src/modules/*"],
       "@admin/*": ["./src/modules/admin/*"],
