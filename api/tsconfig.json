@@ -15,24 +15,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@database/*": [
-        "./src/database*"
-      ],
-      "@modules/*": [
-        "./src/modules/*"
-      ],
-      "@admin/*": [
-        "./src/modules/admin/*"
-      ],
-      "@auth/*": [
-        "./src/modules/auth/*"
-      ],
-      "@system/*": [
-        "./src/modules/admin/system/*"
-      ]
+      "@/*": ["./src/*"],
+      "@database/*": ["./src/database/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@admin/*": ["./src/modules/admin/*"],
+      "@auth/*": ["./src/modules/auth/*"],
+      "@system/*": ["./src/modules/admin/system/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
