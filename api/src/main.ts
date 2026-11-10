@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { setupSwagger } from './swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.setGlobalPrefix(process.env.API_PREFIX ?? 'api');
+  setupSwagger(app);
   await app.listen(process.env.API_PORT ?? 8000);
 }
 bootstrap();
