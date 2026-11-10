@@ -14,6 +14,7 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.setGlobalPrefix(process.env.API_PREFIX ?? 'api');
   await app.listen(process.env.API_PORT ?? 8000);
 }
 bootstrap();
