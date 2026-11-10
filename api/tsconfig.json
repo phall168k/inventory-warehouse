@@ -14,9 +14,30 @@
     "types": ["node", "jest"],
     "sourceMap": true,
     "outDir": "./dist",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@database/*": [
+        "./src/database*"
+      ],
+      "@modules/*": [
+        "./src/modules/*"
+      ],
+      "@admin/*": [
+        "./src/modules/admin/*"
+      ],
+      "@auth/*": [
+        "./src/modules/auth/*"
+      ],
+      "@system/*": [
+        "./src/modules/admin/system/*"
+      ]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false
   }
 }
