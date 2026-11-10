@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { PermissionModule } from './permission/permission.module';
 
-@Module({})
+@Module({
+  imports: [PermissionModule]
+})
 export class SystemModule {}
