@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +11,9 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
   await app.listen(process.env.API_PORT ?? 8000);
 }
 bootstrap();
