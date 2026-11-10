@@ -22,7 +22,7 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migrate:fresh": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d ./src/database/data-source.ts",
     "migrate": "npm run typeorm -- migration:run -d src/database/data-source.ts",
-    "seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d src/database/data-source.ts"
+    "seed": "tsx ./node_modules/typeorm-extension/bin/cli.mjs seed run -d src/database/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -58,6 +58,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.2"
   }
 }

@@ -12,9 +12,9 @@ const options: DataSourceOptions & SeederOptions = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [__dirname + '/../modules/**/*.entity.{.ts,.js}'],
+    entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/admin/*{.ts,.js}'],
-    seeds: ['src/database/seeds/main.seed.ts'],
+    seeds: ['src/database/seeds/*.seed.ts'],
     logging: process.env.DB_LOGGING === 'true',
     synchronize: process.env.DB_SYNCRONIZE === 'true',
 };
