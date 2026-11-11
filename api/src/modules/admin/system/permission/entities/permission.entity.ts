@@ -4,10 +4,12 @@ import {
     Entity,
     Index,
     JoinColumn,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
 } from "typeorm";
+import { RoleEntity } from "../../role/entities/role.entity";
 
 @Entity({ 
     schema: 'admin', 
@@ -41,4 +43,7 @@ export class PermissionEntity extends BaseEntity {
 
     @OneToMany(() => PermissionEntity, (permission) => permission.parent)
     children: PermissionEntity[];
+
+    @ManyToMany(() => RoleEntity, (role) => role.permissions)
+    roles: RoleEntity[];
 }
