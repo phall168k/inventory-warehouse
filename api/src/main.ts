@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { UnprocessableEntityException, ValidationPipe, VersioningType } from '@nestjs/common';
 import { setupSwagger } from './swagger';
+import { HttpResponseInterceptor } from './common/http/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +29,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.setGlobalPrefix(process.env.API_PREFIX ?? 'api');
+  app.useGlobalInterceptors(new HttpResponseInterceptor());
   setupSwagger(app);
   await app.listen(process.env.API_PORT ?? 8000);
 }
