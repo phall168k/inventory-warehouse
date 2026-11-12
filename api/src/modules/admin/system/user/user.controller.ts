@@ -1,3 +1,4 @@
+import { Permissions } from '@/modules/auth/decorators/permission.decorator';
 import { 
   Controller, 
   Get, 
@@ -40,6 +41,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Permissions('user-create')
   @ApiOperation({ summary: 'Create a user' })
   @ApiOkResponse({ type: UserResponseDto })
   @ApiConflictResponse({ description: 'User already created' })
@@ -51,6 +53,7 @@ export class UserController {
   }
 
   @Get()
+  @Permissions('user-read')
   @ApiOperation({ summary: 'Find all users' })
   @ApiPaginationResponseDto(UserResponseDto)
   public findAll(@Query() dto: PaginationRequestDto): Promise<PaginationResponseDto<UserResponseDto>> {
@@ -58,6 +61,7 @@ export class UserController {
   }
 
   @Get('select-options')
+  @Permissions('user-read')
   @ApiOperation({ summary: 'Find all users for select options' })
   @ApiOkResponse({ type: [UserSelectOptionResponseDto] })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -67,6 +71,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Permissions('user-read')
   @ApiOperation({ summary: 'Find a user by id' })
   @ApiOkResponse({ type: UserResponseDto })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -78,6 +83,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @Permissions('user-update')
   @ApiOperation({ summary: 'Update a user by id' })
   @ApiOkResponse({ type: UserResponseDto })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -89,6 +95,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Permissions('user-delete')
   @ApiOperation({ summary: 'Delete a user by id' })
   @ApiOkResponse({ description: 'User deleted successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
