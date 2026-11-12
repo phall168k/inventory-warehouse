@@ -1,3 +1,4 @@
+import { Permissions } from '@/modules/auth/decorators/permission.decorator';
 import { 
   Controller, 
   Get  
@@ -24,6 +25,7 @@ export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 
   @Get()
+  @Permissions('role-read', 'role-create', 'role-update')
   @ApiOperation({ 
     summary: 'Find all permissions for select options' 
   })
