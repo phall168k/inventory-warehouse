@@ -1,3 +1,4 @@
+import { Permissions } from '@/modules/auth/decorators/permission.decorator';
 import { Controller, Get, Post, Body, Param, Delete, Query, ParseUUIDPipe, Put } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleRequestDto } from './dto/create-role-request.dto';
@@ -20,6 +21,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
+  @Permissions('role-create')
   @ApiOperation({ summary: 'Create a role' })
   @ApiOkResponse({ type: RoleResponseDto })
   @ApiConflictResponse({ description: 'Role already created' })
@@ -31,6 +33,7 @@ export class RoleController {
   }
 
   @Get()
+  @Permissions('role-read')
   @ApiOperation({ summary: 'Find all roles' })
   @ApiPaginationResponseDto(RoleResponseDto)
   public findAll(@Query() dto: PaginationRequestDto): Promise<PaginationResponseDto<RoleResponseDto>> {
@@ -38,6 +41,7 @@ export class RoleController {
   }
 
   @Get('select-options')
+  @Permissions('role-read')
   @ApiOperation({ summary: 'Find all roles for select options' })
   @ApiOkResponse({ type: [RoleSelectOptionResponseDto] })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -47,6 +51,7 @@ export class RoleController {
   }
 
   @Get(':id')
+  @Permissions('role-read')
   @ApiOperation({ summary: 'Find a role by id' })
   @ApiOkResponse({ type: RoleResponseDto })
   @ApiNotFoundResponse({ description: 'Role not found' })
@@ -58,6 +63,7 @@ export class RoleController {
   }
 
   @Put(':id')
+  @Permissions('role-update')
   @ApiOperation({ summary: 'Find a role by id' })
   @ApiOkResponse({ type: RoleResponseDto })
   @ApiNotFoundResponse({ description: 'Role not found' })
@@ -69,6 +75,7 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @Permissions('role-delete')
   @ApiOperation({ summary: 'Find a role by id' })
   @ApiOkResponse({ description: 'Role deleted successfully' })
   @ApiNotFoundResponse({ description: 'Role not found' })
