@@ -1,3 +1,4 @@
+import { AuthorizationModule } from '@nestjs/authorization';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
@@ -23,6 +24,7 @@ import { AuthenticationModule } from '@nestjs/authentication';
         absoluteTtl: '7d',
       },
     }),
+    AuthorizationModule.forRoot(),
   ],
   controllers: [],
   providers: [],
