@@ -1,6 +1,7 @@
 import { BaseEntity } from "@/database/entities/base.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PermissionEntity } from "../../permission/entities/permission.entity";
+import { UserEntity } from "../../user/entities/user.entity";
 
 @Entity({
     schema: 'admin',
@@ -44,6 +45,9 @@ export class RoleEntity extends BaseEntity {
         },
     })
     permissions: Promise<PermissionEntity[]>;
+
+    @ManyToMany(() => UserEntity, (user) => user.roles)
+    users: UserEntity[];
 
     constructor(partial?: Partial<PermissionEntity>) {
         super();
