@@ -16,5 +16,6 @@ import { AuthSessionEntity } from './entities/auth-session.entity';
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

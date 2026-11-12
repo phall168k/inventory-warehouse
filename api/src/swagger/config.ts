@@ -10,5 +10,6 @@ export const SWAGGER_TOKEN_NAME = 'access-token';
 export const SWAGGER_AUTH_OPTIONS: SecuritySchemeObject = {
     type: 'http',
     scheme: 'bearer',
-    bearerFormat: 'Bearer',
+    bearerFormat: 'JWT',
+    description: 'Enter your JWT access token',
 }

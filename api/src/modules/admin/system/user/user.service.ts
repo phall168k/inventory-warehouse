@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserRequestDto } from './dto/create-user-request.dto';
 import { UpdateUserRequestDto } from './dto/update-user-request.dto';
 import { BasePaginationService } from '@/common/services/base-pagination.service';
@@ -9,8 +9,8 @@ import { In, Repository } from 'typeorm';
 import { RoleEntity } from '../role/entities/role.entity';
 import { UserMapper } from './user.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
-import { PasswordHash } from '@/common/utils/password-hash.util';
 import { UserSelectOptionResponseDto } from './dto/user-select-option-response.dto';
+import { PasswordHasher } from '@nestjs/authentication';
 
 @Injectable()
 export class UserService extends BasePaginationService<UserEntity, UserResponseDto>{
@@ -22,6 +22,7 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
+    private readonly passwordHasher: PasswordHasher,
   ) {
     super();
   }
@@ -38,7 +39,7 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
     try {
       let entity = await UserMapper.toCreateEntity({
         ...dto,
-        password: await PasswordHash.hash(dto.password),
+        password: await this.passwordHasher.hash(dto.password),
       });
       entity = await this.userRepository.save(entity);
       await this.userRepository
@@ -81,6 +82,37 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
     } catch (error) {
       handleError(error);
     }
+  }
+
+  public async findByUsername(username: string): Promise<UserEntity> {
+    return await this.userRepository.findOne({
+      select: {
+        id: true,
+        nameEn: true,
+        nameKh: true,
+        username: true,
+        email: true,
+        password: true,
+        isSuperUser: true,
+        profile: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        roles: {
+          permissions: true,
+        },
+      },
+      where: { 
+        username,
+        isActive: true, 
+      },
+      relations: {
+        roles: {
+          permissions: true,
+        },
+      },
+    });
   }
 
   public async update(id: string, dto: UpdateUserRequestDto): Promise<UserResponseDto> {

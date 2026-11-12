@@ -15,6 +15,7 @@ export class UserMapper {
         dto.nameKh = entity.nameKh;
         dto.username = entity.username;
         dto.email = entity.email;
+        dto.isSuperUser = entity.isSuperUser;
         dto.isActive = entity.isActive;
         dto.profile = entity.profile;
         dto.createdAt = entity.createdAt;
@@ -32,6 +33,7 @@ export class UserMapper {
         dto.username = entity.username;
         dto.email = entity.email;
         dto.isActive = entity.isActive;
+        dto.isSuperUser = entity.isSuperUser;
         dto.profile = entity.profile;
         dto.createdAt = entity.createdAt;
         dto.updatedAt = entity.updatedAt;
