@@ -1,3 +1,4 @@
+import { Can } from '@nestjs/authorization';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -35,6 +36,7 @@ export class AuthController {
     }
 
     @Get('me')
+    @Can.Anyone()
     @ApiBearerAuth(SWAGGER_TOKEN_NAME)
     @ApiOperation({ summary: 'Get user information' })
     @ApiOkResponse({ type: UserResponseDto })
