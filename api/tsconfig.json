@@ -25,7 +25,8 @@
       "@modules/*": ["./src/modules/*"],
       "@admin/*": ["./src/modules/admin/*"],
       "@auth/*": ["./src/modules/auth/*"],
-      "@system/*": ["./src/modules/admin/system/*"]
+      "@system/*": ["./src/modules/admin/system/*"],
+      "@master-data/*": ["./src/modules/admin/master-data/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
