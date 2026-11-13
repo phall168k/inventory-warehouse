@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { 
     enabled: true 
   },
-  modules: ['@nuxtjs/tailwindcss', '@element-plus/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@element-plus/nuxt', '@nuxt/icon/module'],
   runtimeConfig: {
     public: {
       NUXT_PUBLIC_API: process.env.NUXT_PUBLIC_API,
