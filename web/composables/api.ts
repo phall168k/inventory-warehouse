@@ -1,34 +1,59 @@
-import { useCookie, useRuntimeConfig } from '#app'
-import type { NitroFetchOptions } from 'nitropack'
+
+import type { NitroFetchOptions } from 'nitropack';
 
 export type ApiOptions = NitroFetchOptions<string> & {
   responseType?: 'json'
 }
 
-/**
- * Fetch JSON from the configured API within a Nuxt context.
- * Set authOnly to false for public requests such as sign-in.
- * Fetch errors propagate unchanged so callers can handle status and error.data.
- */
-export const useApi = <T = unknown>(
+export const useApi = async <T = unknown>(
   url: string,
   options: ApiOptions = {},
   authOnly: boolean = true,
 ): Promise<IResponse<T>> => {
   const config = useRuntimeConfig()
-  const headers = new Headers(options.headers)
+  const { auth, refreshToken, clearAuth } = useAuth()
 
-  if (authOnly && !headers.has('Authorization')) {
-    const auth = useCookie<IAuthResponse | null>('auth')
+  const request = (token?: string) => {
+    const headers = new Headers(options.headers)
 
-    if (auth.value?.accessToken) {
-      headers.set('Authorization', `Bearer ${auth.value.accessToken}`)
+    if (authOnly && token) {
+      headers.set('Authorization', `Bearer ${token}`)
     }
+
+    return $fetch<IResponse<T>>(url, {
+      ...options,
+      baseURL: config.public.NUXT_PUBLIC_API,
+      headers,
+    })
   }
 
-  return $fetch<IResponse<T>>(url, {
-    baseURL: config.public.NUXT_PUBLIC_API,
-    ...options,
-    headers,
-  })
+  try {
+    return await request(auth.value?.accessToken)
+  } catch (error: unknown) {
+    const status = (error as {
+      statusCode?: number
+      status?: number
+    })?.statusCode ?? (error as {
+      status?: number
+    })?.status
+
+    if (status !== 401 || !authOnly) {
+      throw error
+    }
+
+    const newToken = await refreshToken()
+
+    if (!newToken) {
+      clearAuth()
+
+      if (import.meta.client) {
+        await navigateTo('/login')
+      }
+
+      throw error
+    }
+
+    // Retry only once with the new token.
+    return request(newToken)
+  }
 }
