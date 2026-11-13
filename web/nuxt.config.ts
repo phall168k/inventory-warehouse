@@ -4,5 +4,5 @@ export default defineNuxtConfig({
   devtools: { 
     enabled: true 
   },
-  modules: ['@nuxtjs/tailwindcss', '@element-plus/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@element-plus/nuxt', '@nuxt/icon/module'],
 })
