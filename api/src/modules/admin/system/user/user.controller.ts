@@ -30,6 +30,7 @@ import { ApiPaginationResponseDto } from '@/common/pagination/dto/api-pagination
 import { PaginationRequestDto } from '@/common/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@/common/pagination/dto/pagination-response.dto';
 import { UserSelectOptionResponseDto } from './dto/user-select-option-response.dto';
+import { Can } from '@nestjs/authorization';
 
 @ApiTags('Users')
 @ApiBearerAuth(SWAGGER_TOKEN_NAME)
@@ -61,7 +62,7 @@ export class UserController {
   }
 
   @Get('select-options')
-  @Permissions('user-read')
+  @Can.Anyone()
   @ApiOperation({ summary: 'Find all users for select options' })
   @ApiOkResponse({ type: [UserSelectOptionResponseDto] })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })

@@ -8,6 +8,7 @@ import {
     PrimaryGeneratedColumn 
 } from "typeorm";
 import { RoleEntity } from "../../role/entities/role.entity";
+import { WarehouseEntity } from "@/modules/admin/master-data/warehouse/entities/warehouse.entity";
 
 @Entity({
     schema: 'admin',
@@ -100,6 +101,24 @@ export class UserEntity extends BaseEntity {
         },
     })
     roles: Promise<RoleEntity[]>;
+
+    @ManyToMany(() => WarehouseEntity, (warehouse) => warehouse.users, {
+        nullable: true,
+        cascade: false,
+        lazy: true,
+    })
+    @JoinTable({
+        schema: 'admin',
+        name: 'users_warehouses',
+        joinColumn: {
+            name: 'user_id',
+        },
+        inverseJoinColumn: {
+            name: 'warehouse_id',
+            referencedColumnName: 'id',
+        }
+    })
+    warehouses: Promise<WarehouseEntity[]>;
 
     constructor(partial?: Partial<UserEntity>) {
         super();

@@ -1,3 +1,5 @@
+import { WarehouseEntity } from '../../master-data/warehouse/entities/warehouse.entity';
+import { WarehouseMapper } from '../../master-data/warehouse/warehouse.mapper';
 import { RoleEntity } from "../role/entities/role.entity";
 import { RoleMapper } from "../role/role.mapper";
 import { CreateUserRequestDto } from "./dto/create-user-request.dto";
@@ -38,6 +40,9 @@ export class UserMapper {
         dto.createdAt = entity.createdAt;
         dto.updatedAt = entity.updatedAt;
         dto.deletedAt = entity.deletedAt;
+        if (entity.warehouses) {
+            dto.warehouses = await Promise.all((await entity.warehouses).map(WarehouseMapper.toSelectOptionDto));
+        }
         if (entity.roles) {
             dto.roles = await Promise.all((await entity.roles).map(RoleMapper.toDto));
         }
@@ -66,6 +71,7 @@ export class UserMapper {
         entity.isActive = dto.isActive;
         entity.profile = dto.profile ?? null;
         entity.roles = Promise.resolve(dto.roles.map((id) => new RoleEntity({ id })));
+        entity.warehouses = Promise.resolve((dto.warehouses ?? []).map((id) => new WarehouseEntity({ id })));
 
         return entity;
     }

@@ -47,6 +47,11 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
         .relation(UserEntity, 'roles')
         .of(entity)
         .add(dto.roles);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(UserEntity, 'warehouses')
+        .of(entity)
+        .add(dto.warehouses);
       return UserMapper.toDtoWithRelationship(entity);
     } catch (error) {
       handleError(error);

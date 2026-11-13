@@ -64,4 +64,11 @@ export class CreateUserRequestDto {
     @IsUUID('all', { each: true })
     roles: string[];
 
+    @ApiPropertyOptional({ type: [String], description: 'Existing warehouse IDs assigned to the user' })
+    @IsOptional()
+    @IsArray()
+    @ArrayUnique()
+    @IsUUID('all', { each: true })
+    warehouses?: string[];
+
 }

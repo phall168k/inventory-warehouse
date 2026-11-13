@@ -1,3 +1,4 @@
+import { WarehouseSelectOptionResponseDto } from '../../../master-data/warehouse/dto/warehouse-select-option-response.dto';
 import { AttachmentDto } from "@/common/dto/attachment.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { RoleResponseDto } from "../../role/dto/role-response.dto";
@@ -29,6 +30,9 @@ export class UserResponseDto {
 
     @ApiProperty()
     roles: RoleResponseDto[];
+
+    @ApiProperty({ type: [WarehouseSelectOptionResponseDto] })
+    warehouses: WarehouseSelectOptionResponseDto[];
 
     @ApiProperty()
     createdAt: Date;

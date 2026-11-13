@@ -4,6 +4,8 @@ import { RoleEntity } from "@/modules/admin/system/role/entities/role.entity";
 import { Seeder } from "typeorm-extension";
 import { permissions } from "./permission.seed";
 import { roles } from "./role.seed";
+import { WarehouseEntity } from "@/modules/admin/master-data/warehouse/entities/warehouse.entity";
+import { warehouses } from "./warehouse.seed";
 
 export default class MainSeeder implements Seeder {
     public async run(database: DataSource): Promise<void> {
@@ -74,6 +76,9 @@ export default class MainSeeder implements Seeder {
                 await roleRepository.save(entity);
             }
         });
+
+        // Warehouse seed
+        await database.manager.save(WarehouseEntity, warehouses);
         
     }
 }
