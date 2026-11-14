@@ -5,4 +5,8 @@ declare global {
         id: string;
         name: string;
     }
+
+    interface IPermissionSelectOption extends IPermissionResponse {
+        children?: IPermissionResponse[];
+    }
 }

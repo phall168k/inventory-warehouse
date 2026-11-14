@@ -33,6 +33,13 @@
       available: true, 
       permission: 'user-read' 
     },
+    { 
+      label: 'role.title', 
+      to: '/admin/system/roles', 
+      icon: 'hugeicons:security-lock', 
+      available: true, 
+      permission: 'role-read' 
+    },
   ];
 
   const visibleItems = computed(() => 
