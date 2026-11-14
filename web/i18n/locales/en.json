@@ -17,5 +17,15 @@
         "page": "Page",
         "logout": "Logout",
         "actions": "Actions"
+    },
+    "user": {
+        "title": "Users",
+        "description": "Manager user accounts and access",
+        "name_en": "Name(English)",
+        "name_kh": "Name(Khmer)",
+        "username": "Username",
+        "password": "Password",
+        "email": "Email",
+        "status": "Status"
     }
 }
