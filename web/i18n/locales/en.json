@@ -4,7 +4,18 @@
         "view": "View",
         "edit": "Edit",
         "delete": "Delete",
+        "add_new": "Add New",
+        "save_change": "Save changes",
+        "close": "Close",
+        "cancel": "Cancel",
         "refresh": "Refresh",
-        "search": "Search..."
+        "search": "Search...",
+        "showing": "Showing",
+        "of": "of",
+        "record": "Records",
+        "per_page": "Per Page",
+        "page": "Page",
+        "logout": "Logout",
+        "actions": "Actions"
     }
 }

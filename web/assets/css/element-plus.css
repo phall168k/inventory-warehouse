@@ -17,3 +17,17 @@
   --el-color-success-light-9: #EFF8F2;
   --el-color-success-dark-2: #4B9567;
 }
+
+.el-input.el-input,
+.el-textarea.el-textarea {
+  --el-input-border-radius: 0.7rem;
+}
+
+.el-select .el-select__wrapper {
+  border-radius: 0.7rem;
+}
+
+.el-dropdown__popper.el-popper,
+.el-dropdown-menu.el-dropdown-menu {
+  border-radius: 0.7rem;
+}
