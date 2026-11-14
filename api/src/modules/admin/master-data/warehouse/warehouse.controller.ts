@@ -51,8 +51,11 @@ export class WarehouseController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiInternalServerErrorResponse({ description: 'Server error' })
-  public create(@Body() createWarehouseDto: CreateWarehouseRequestDto): Promise<WarehouseResponseDto> {
-    return this.warehouseService.create(createWarehouseDto);
+  public create(@Body() dto: CreateWarehouseRequestDto, @CurrentUser() user: UserResponseDto): Promise<WarehouseResponseDto> {
+    return this.warehouseService.create({
+      ...dto,
+      createdById: user.id,
+    });
   }
 
   @Get()
