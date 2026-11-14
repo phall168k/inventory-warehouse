@@ -1,0 +1,10 @@
+{
+    "app": {
+        "create": "Add New",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "refresh": "Refresh",
+        "search": "Search..."
+    }
+}
