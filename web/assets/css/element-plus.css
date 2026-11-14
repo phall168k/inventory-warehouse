@@ -1,0 +1,19 @@
+/* Element Plus brand colors and interaction shades. */
+:root:root {
+  --el-color-primary: #2765EB;
+  --el-color-primary-rgb: 39, 101, 235;
+  --el-color-primary-light-3: #6893F1;
+  --el-color-primary-light-5: #93B2F5;
+  --el-color-primary-light-7: #BED1F9;
+  --el-color-primary-light-8: #D4E0FB;
+  --el-color-primary-light-9: #E9F0FD;
+  --el-color-primary-dark-2: #1F51BC;
+  --el-color-success: #5EBA81;
+  --el-color-success-rgb: 94, 186, 129;
+  --el-color-success-light-3: #8ECFA7;
+  --el-color-success-light-5: #AFDDC0;
+  --el-color-success-light-7: #CFEAD9;
+  --el-color-success-light-8: #DFF1E6;
+  --el-color-success-light-9: #EFF8F2;
+  --el-color-success-dark-2: #4B9567;
+}
