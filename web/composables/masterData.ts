@@ -5,7 +5,7 @@ export const useMasterData = <T>(url: string) => {
   const fetch = async () => {
     loadingMasterData.value = true;
     const config = useRuntimeConfig();
-    url = `${config.public.apiBaseUrl}${url}`;
+    url = `${config.public.NUXT_PUBLIC_API}${url}`;
     const response = await useApi<T[]>(url);
     loadingMasterData.value = false;
     data.value = response.payload;
