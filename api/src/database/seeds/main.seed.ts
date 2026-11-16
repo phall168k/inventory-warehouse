@@ -6,6 +6,8 @@ import { permissions } from "./permission.seed";
 import { roles } from "./role.seed";
 import { WarehouseEntity } from "@/modules/admin/master-data/warehouse/entities/warehouse.entity";
 import { warehouses } from "./warehouse.seed";
+import { CategoryEntity } from "@/modules/admin/master-data/category/entities/category.entity";
+import { categories } from "./category.seed";
 
 export default class MainSeeder implements Seeder {
     public async run(database: DataSource): Promise<void> {
@@ -79,6 +81,7 @@ export default class MainSeeder implements Seeder {
 
         // Warehouse seed
         await database.manager.save(WarehouseEntity, warehouses);
-        
+        // Category seed
+        await database.manager.save(CategoryEntity, categories);
     }
 }

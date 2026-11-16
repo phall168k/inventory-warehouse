@@ -26,4 +26,13 @@ export const permissions = [
             'warehouse-delete',
         ],
     },
+    {
+        name: 'Category',
+        children: [
+            'category-read',
+            'category-create',
+            'category-update',
+            'category-delete',
+        ],
+    },
 ];
