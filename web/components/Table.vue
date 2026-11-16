@@ -337,6 +337,7 @@ defineExpose({ refresh })
     </div>
 
     <el-dialog 
+      append-to-body
       :model-value="dialogOpen" 
       :title="dialogTitle" 
       :width="props.dialogOptions?.width ?? 'min(640px, 94vw)'"
