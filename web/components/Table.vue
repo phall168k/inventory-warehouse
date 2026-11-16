@@ -162,11 +162,13 @@ defineExpose({ refresh })
           v-loading="loading" 
           :data="visibleRows" 
           row-key="id" 
-          empty-text="No records found" 
           :aria-busy="loading"
           size="large"
           stripe
         >
+          <template #empty>
+            {{ $t('app.no_data') }}
+          </template>
           <el-table-column 
             v-for="header in columns" 
             :key="header.key" 
