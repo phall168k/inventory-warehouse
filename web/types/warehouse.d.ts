@@ -1,6 +1,13 @@
 export {};
 
 declare global {
+    interface IWarehouseAttachment {
+        file: { name: string; size: number };
+        url: string;
+        isImage: boolean;
+        code: string;
+    }
+
     interface IWarehouseResponse {
         id: string;
         code: string;
@@ -10,9 +17,9 @@ declare global {
         manager: IUserResponse;
         address?: string;
         contactNumber?: string;
-        logo?: Object;
+        logo?: IWarehouseAttachment | null;
         createdById?: string;
-        createdby: IUserResponse;
+        createdBy?: IUserResponse;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
@@ -25,6 +32,6 @@ declare global {
         managerId: string;
         address?: string;
         contactNumber?: string;
-        logo?: Object;
+        logo?: IWarehouseAttachment | null;
     }
 }

@@ -39,5 +39,26 @@
         "name_max": "Use no more than 150 characters",
         "permissions_required": "Select at least one permission",
         "retry": "Try again"
+    },
+    "warehouse": {
+        "title": "Warehouses",
+        "description": "Manage warehouses, managers, and contact details.",
+        "code": "Code",
+        "name_en": "Name (English)",
+        "name_kh": "Name (Khmer)",
+        "manager": "Manager",
+        "select_manager": "Select a manager",
+        "address": "Address",
+        "contact_number": "Contact number",
+        "logo": "Logo",
+        "logo_url": "Logo URL (https://...)",
+        "file_name": "File name",
+        "file_size": "File size (bytes)",
+        "logo_code": "Logo code",
+        "is_image": "Image",
+        "preview_unavailable": "Preview unavailable",
+        "required": "This field is required",
+        "logo_invalid": "Enter a valid HTTP or HTTPS URL, file name, logo code, and non-negative file size.",
+        "retry": "Try again"
     }
 }

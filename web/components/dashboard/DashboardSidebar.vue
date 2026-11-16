@@ -20,6 +20,13 @@
       icon: 'energy-icons:dashboard-20', 
       available: true 
     },
+    {
+      label: 'warehouse.title',
+      to: '/admin/system/warehouses',
+      icon: 'clarity:store-line',
+      available: true,
+      permission: 'warehouse-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 
