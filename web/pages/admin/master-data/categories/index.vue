@@ -1,0 +1,96 @@
+<script setup lang="ts">
+import Table from '~/components/Table.vue'
+import type { TableHeader } from '~/types/crud'
+
+  definePageMeta({ 
+    title: 'category.title', 
+    permission: 'category-read', 
+  });
+
+  const headers: TableHeader[] = [
+    { 
+      title: 'category.code', 
+      key: 'code', 
+      filterOption: 
+      { 
+        type: 'text', 
+        label: 'category.code' 
+      } 
+    },
+    { 
+      title: 'category.name_en', 
+      key: 'nameEn', 
+      filterOption: { 
+        type: 'text', 
+        label: 'category.name_en' 
+      } 
+    },
+    { 
+      title: 'category.name_kh', 
+      key: 'nameKh', 
+      filterOption: { 
+        type: 'text', 
+        label: 'category.name_kh' 
+      } 
+    },
+    { 
+      title: 'category.created_by', 
+      key: 'createdBy', 
+      filterOption: { 
+        type: 'text', 
+        label: 'category.created_by' 
+      } 
+    },
+    { 
+      title: 'app.created_at', 
+      key: 'createdAt', 
+      filterOption: { 
+        type: 'date', 
+        label: 'app.created_at' 
+      } 
+    },
+    { 
+      title: 'category.status', 
+      key: 'status', 
+      filterOption: { 
+        type: 'boolean', 
+        label: 'category.status' 
+      } 
+    },
+    { 
+      title: 'app.actions', 
+      key: 'action' 
+    },
+  ]
+</script>
+
+<template>
+  <Table
+    :headers="headers"
+    :page-header="{ 
+      title: 'category.title', 
+      description: 'category.description' 
+    }"
+    crud-path="admin/master-data/categories"
+    module-name="category"
+    :dialog-options="{ 
+      width: 850 
+    }"
+  >
+    <template #form="{ formRef, externalErrors }">
+      <CategoriesForm :form-ref="formRef" :external-errors="externalErrors" />
+    </template>
+    <template #item.createdBy="{ item }">
+      <span>{{ item.createdBy[$t('app.name_lang')] ?? '-' }}</span>
+    </template>
+    <template #item.status="{ item }">
+      <el-switch
+        :model-value="item.status as boolean"
+         style="--el-switch-on-color: #4B9567; --el-switch-off-color: #ff4949"
+      />
+    </template>
+    <template #item.createdAt="{ item }">
+      {{ formatDateTime(item.createdAt) }}
+    </template>
+  </Table>
+</template>

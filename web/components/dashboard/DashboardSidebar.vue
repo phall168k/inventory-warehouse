@@ -22,10 +22,17 @@
     },
     {
       label: 'warehouse.title',
-      to: '/admin/system/warehouses',
+      to: '/admin/master-data/warehouses',
       icon: 'clarity:store-line',
       available: true,
       permission: 'warehouse-read'
+    },
+    {
+      label: 'category.title',
+      to: '/admin/master-data/categories',
+      icon: 'bx:category-alt',
+      available: true,
+      permission: 'category-read'
     },
     { 
       label: 'Reports', 
