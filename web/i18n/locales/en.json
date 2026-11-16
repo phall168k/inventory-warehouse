@@ -18,7 +18,8 @@
         "logout": "Logout",
         "actions": "Actions",
         "name_lang": "nameEn",
-        "created_at": "Created At"
+        "created_at": "Created At",
+        "no_data": "No record found!"
     },
     "user": {
         "title": "Users",
@@ -72,6 +73,18 @@
         "status": "Status",
         "created_by": "Created By",
         "select_category": "Select a category",
+        "required": "This field is required",
+        "retry": "Try again"
+    },
+    "uom": {
+        "title": "Unit of Measure",
+        "description": "Manage unit of measure",
+        "code": "Code",
+        "name_en": "Name (English)",
+        "name_kh": "Name (Khmer)",
+        "status": "Status",
+        "created_by": "Created By",
+        "select_category": "Select a uom",
         "required": "This field is required",
         "retry": "Try again"
     }

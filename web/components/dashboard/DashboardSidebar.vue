@@ -34,6 +34,13 @@
       available: true,
       permission: 'category-read'
     },
+    {
+      label: 'uom.title',
+      to: '/admin/master-data/uoms',
+      icon: 'coolicons:pencil-ruler',
+      available: true,
+      permission: 'uom-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 

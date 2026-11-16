@@ -35,4 +35,13 @@ export const permissions = [
             'category-delete',
         ],
     },
+    {
+        name: 'Uom',
+        children: [
+            'uom-read',
+            'uom-create',
+            'uom-update',
+            'uom-delete',
+        ],
+    },
 ];
