@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { ModulesModule } from './modules/modules.module';
 import { AuthenticationModule } from '@nestjs/authentication';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthenticationModule } from '@nestjs/authentication';
       isGlobal: true,
     }),
     DatabaseModule,
+    MinioModule,
     ModulesModule,
     AuthenticationModule.forRoot({
       accessToken: {

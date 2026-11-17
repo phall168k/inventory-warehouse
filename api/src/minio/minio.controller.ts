@@ -1,0 +1,88 @@
+import { SWAGGER_TOKEN_NAME } from '@/swagger/config';
+import { 
+    Controller, 
+    Delete, 
+    Get, 
+    Param, 
+    Post, 
+    Query, 
+    UploadedFile, 
+    UseInterceptors 
+} from '@nestjs/common';
+import { 
+    ApiBearerAuth, 
+    ApiBody, 
+    ApiConsumes, 
+    ApiOperation, 
+    ApiResponse, 
+    ApiTags 
+} from '@nestjs/swagger';
+import { MinioService } from './minio.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AttachmentDto } from '@/common/dto/attachment.dto';
+import { Can } from '@nestjs/authorization';
+
+@ApiTags('Upload file')
+@ApiBearerAuth(SWAGGER_TOKEN_NAME)
+@Controller({
+    path: 'admin/minio',
+    version: '1',
+})
+export class MinioController {
+    constructor(private minioService: MinioService){}
+
+    @Get(':path')
+    @Can.Anyone()
+    async viewFile(@Param('path') path: string) {
+        console.log(path);
+        return await this.minioService.getPreviewUrl(path);
+    }
+
+    @Post('upload')
+    @Can.Anyone()
+    @ApiOperation({ 
+        summary: 'Upload file to MinIO',
+    })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'File uploaded successfully',
+        type: AttachmentDto,
+    })
+    @UseInterceptors(FileInterceptor('file', {
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter: (_, file, cb) => {
+            if (!file.mimetype.match(/(pdf|png|jpg|jpeg)$/)) {
+                return cb(new Error('Invalid file type'), false);
+            }
+            cb(null, true);
+        },
+    }))
+    public async uploadFile(@UploadedFile() file: Express.Multer.File){
+        return await this.minioService.uploadImage(
+            new Date().getTime() + '-' + file.originalname,
+            file.buffer,
+        );
+    }
+
+    @Delete('delete')
+    @Can.Anyone()
+    async deleteFile(
+        @Query('bucket') bucket: string,
+        @Query('object') object: string,
+    ) {
+        await this.minioService.deleteFile(bucket, object)
+        return { message: 'File deleted successfully' }
+    }
+}
