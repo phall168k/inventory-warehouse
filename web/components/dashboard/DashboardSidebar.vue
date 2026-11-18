@@ -41,6 +41,13 @@
       available: true,
       permission: 'uom-read'
     },
+    {
+      label: 'product.title',
+      to: '/admin/master-data/products',
+      icon: 'andrsrxn:list-unordered',
+      available: true,
+      permission: 'product-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 

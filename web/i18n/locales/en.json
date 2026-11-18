@@ -22,6 +22,7 @@
         "no_data": "No record found!"
     },
     "user": {
+        "profile": "Profile",
         "title": "Users",
         "description": "Manage user accounts and access",
         "name_en": "Name(English)",
@@ -87,5 +88,34 @@
         "select_category": "Select a uom",
         "required": "This field is required",
         "retry": "Try again"
+    },
+    "upload": {
+        "size_limit": "Files must be {size} MB or smaller.",
+        "drop_here": "Drop files here or",
+        "click": "click to upload",
+        "invalid_type": "Only PDF, PNG, and JPEG files are allowed.",
+        "invalid_size": "Files must be 5 MB or smaller.",
+        "failed": "Upload failed.",
+        "popup_blocked": "Allow pop-ups to preview files.",
+        "preview_failed": "Unable to preview this file.",
+        "confirm_delete": "Delete {fileName}?",
+        "deleted": "File deleted successfully.",
+        "delete_failed": "Unable to delete this file."
+    },
+    "product": {
+        "title": "Products",
+        "description": "Manage products",
+        "code": "Code",
+        "name_en": "Name (English)",
+        "name_kh": "Name (Khmer)",
+        "status": "Status",
+        "created_by": "Created By",
+        "select_category": "Select a category",
+        "required": "This field is required",
+        "retry": "Try again",
+        "category": "Category",
+        "uom": "Unit of measure",
+        "thumbnail": "Thumbnail",
+        "select_uom": "Select a unit of measure"
     }
 }

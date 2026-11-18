@@ -44,4 +44,13 @@ export const permissions = [
             'uom-delete',
         ],
     },
+    { 
+        name: 'Product', 
+        children: [
+            'product-read', 
+            'product-create', 
+            'product-update', 
+            'product-delete'
+        ], 
+    },
 ];
