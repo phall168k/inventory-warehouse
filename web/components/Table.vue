@@ -369,7 +369,11 @@ defineExpose({ refresh })
       <el-alert v-if="dialogError" :title="dialogError" type="error" :closable="false" show-icon class="mb-4" />
       <div v-loading="busy" :aria-busy="busy">
         <el-descriptions v-if="action === CrudDialogState.viewing" :column="1" border>
-          <el-descriptions-item v-for="header in columns" :key="header.key" :label="translateLabel(header.title)">{{ formatValue(header, record) }}</el-descriptions-item>
+          <el-descriptions-item v-for="header in columns" :key="header.key" :label="translateLabel(header.title)">
+            <slot :name="`item.${header.key}`" :item="record" :value="record[header.key]" :viewing="true">
+              {{ formatValue(header, record) }}
+            </slot>
+          </el-descriptions-item>
         </el-descriptions>
         <Form v-else-if="ready" ref="form" v-model="formData" :fields="fields" :external-errors="errorFields" :mode="action === CrudDialogState.creating ? 'create' : 'edit'" :disabled="busy" :show-actions="false" @submit="save">
           <template v-if="slots.form" #default>
