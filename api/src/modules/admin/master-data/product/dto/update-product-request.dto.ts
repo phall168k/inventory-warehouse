@@ -1,22 +1,16 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ArrayUnique, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateIf, ValidateNested } from 'class-validator';
 import { AttachmentDto } from '@/common/dto/attachment.dto';
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-  ValidateIf,
-  ValidateNested,
-} from 'class-validator';
 
-export class CreateProductDto {
+export class UpdateProductRequestDto {
+  @ApiPropertyOptional({ type: [String], format: 'uuid' })
+  @ValidateIf((_object, value) => value !== undefined)
+  @IsArray()
+  @ArrayUnique()
+  @IsUUID('4', { each: true })
+  warehouseIds?: string[];
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -53,7 +47,4 @@ export class CreateProductDto {
   @ValidateNested()
   @Type(() => AttachmentDto)
   thumbnail?: AttachmentDto | null;
-
-  @ApiHideProperty()
-  createdById: string;
 }

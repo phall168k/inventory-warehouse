@@ -6,10 +6,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CategoryEntity } from '../../category/entities/category.entity';
 import { UomEntity } from '../../uom/entities/uom.entity';
+import { StockEntity } from '@/modules/admin/inventory/stock/entities/stock.entity';
 
 @Entity({ schema: 'admin', name: 'products' })
 export class ProductEntity extends BaseEntity {
@@ -102,6 +104,9 @@ export class ProductEntity extends BaseEntity {
     nullable: true,
   })
   thumbnail: AttachmentDto;
+
+  @OneToMany(() => StockEntity, (stock) => stock.product)
+  stocks: StockEntity[];
 
   constructor(partial?: Partial<ProductEntity>) {
     super();

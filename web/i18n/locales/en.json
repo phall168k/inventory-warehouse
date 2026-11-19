@@ -116,6 +116,26 @@
         "category": "Category",
         "uom": "Unit of measure",
         "thumbnail": "Thumbnail",
-        "select_uom": "Select a unit of measure"
+        "select_uom": "Select a unit of measure",
+        "select_all_warehouses": "Select all warehouses",
+        "stock_fields": "Stock fields",
+        "warehouses": "Warehouses",
+        "select_warehouses": "Select warehouses",
+        "min_stock": "Minimum stock",
+        "receive_quantity": "Receive quantity",
+        "issue_quantity": "Issue quantity",
+        "transfer_quantity": "Transfer quantity",
+        "adjustment_quantity": "Adjustment quantity"
+    },
+    "stock": {
+        "title": "Stocks",
+        "description": "Manage stocks",
+        "min_stock": "Min stock",
+        "stock_quantity": "Stock quantity",
+        "out_of_stock": "Out of stock",
+        "low_stock": "Low stock",
+        "total_stock": "Total stocks",
+        "total_warehouses": "Total warehouses",
+        "total_products": "Total products"
     }
 }

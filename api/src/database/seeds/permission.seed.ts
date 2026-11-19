@@ -53,4 +53,12 @@ export const permissions = [
             'product-delete'
         ], 
     },
+    { 
+        name: 'Stock', 
+        children: [
+            'stock-read', 
+            'stock-update', 
+            'stock-delete'
+        ], 
+    },
 ];

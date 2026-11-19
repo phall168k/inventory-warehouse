@@ -116,6 +116,26 @@
         "category": "ប្រភេទ",
         "uom": "ឯកតារង្វាស់",
         "thumbnail": "រូបភាពទំនិញ",
-        "select_uom": "ជ្រើសរើសឯកតារង្វាស់"
+        "select_uom": "ជ្រើសរើសឯកតារង្វាស់",
+        "select_all_warehouses": "ជ្រើសរើសឃ្លាំងទាំងអស់",
+        "stock_fields": "ព័ត៌មានស្តុក",
+        "warehouses": "ឃ្លាំង",
+        "select_warehouses": "ជ្រើសរើសឃ្លាំង",
+        "min_stock": "ស្តុកអប្បបរមា",
+        "receive_quantity": "បរិមាណទទួល",
+        "issue_quantity": "បរិមាណបញ្ចេញ",
+        "transfer_quantity": "បរិមាណផ្ទេរ",
+        "adjustment_quantity": "បរិមាណកែតម្រូវ"
+    },
+    "stock": {
+        "title": "ស្តុក",
+        "description": "គ្រប់គ្រងស្តុកទំនិញ",
+        "min_stock": "ស្តុកទាប",
+        "stock_quantity": "ចំនួនក្នុងស្តុក",
+        "out_of_stock": "អស់ស្ដុក",
+        "low_stock": "ស្តុកទាប",
+        "total_stock": "ស្តុកសរុប",
+        "total_warehouses": "ឃ្លាំងសរុប",
+        "total_products": "ទំនិញសរុប"
     }
 }

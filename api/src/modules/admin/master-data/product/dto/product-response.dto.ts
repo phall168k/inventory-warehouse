@@ -3,6 +3,7 @@ import { CategoryResponseDto } from '../../category/dto/category-response.dto';
 import { UomResponseDto } from '../../uom/dto/uom-response.dto';
 import { UserResponseDto } from '@/modules/admin/system/user/dto/user-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { StockResponseDto } from '@/modules/admin/inventory/stock/dto/stock-response.dto';
 
 export class ProductResponseDto {
   @ApiProperty({
@@ -55,4 +56,10 @@ export class ProductResponseDto {
 
   @ApiProperty()
   deletedAt: Date;
+
+  @ApiProperty({
+    type: () => StockResponseDto,
+    isArray: true,
+  })
+  stocks: StockResponseDto[];
 }

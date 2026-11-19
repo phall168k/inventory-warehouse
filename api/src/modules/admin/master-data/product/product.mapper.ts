@@ -3,67 +3,87 @@ import { CategoryMapper } from '../category/category.mapper';
 import { UomMapper } from '../uom/uom.mapper';
 import { ProductResponseDto } from './dto/product-response.dto';
 import { ProductSelectOptionDto } from './dto/product-select-option-response.dto';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-product-request.dto';
+import { UpdateProductRequestDto } from './dto/update-product-request.dto';
 import { ProductEntity } from './entities/product.entity';
+import { StockMapper } from '../../inventory/stock/stock.mapper';
 
 export class ProductMapper {
-  static async toDto(entity: ProductEntity): Promise<ProductResponseDto> {
-    const dto = Object.assign(new ProductResponseDto(), {
-      id: entity.id,
-      code: entity.code,
-      nameEn: entity.nameEn,
-      nameKh: entity.nameKh,
-      categoryId: entity.categoryId,
-      uomId: entity.uomId,
-      status: entity.status,
-      thumbnail: entity.thumbnail,
-      createdById: entity.createdById,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt,
-    });
-    if (entity.createdBy)
+  public static async toDto(entity: ProductEntity): Promise<ProductResponseDto> {
+    const dto = new ProductResponseDto();
+
+    dto.id = entity.id;
+    dto.code = entity.code;
+    dto.nameEn = entity.nameEn;
+    dto.nameKh = entity.nameKh;
+    dto.categoryId = entity.categoryId;
+    dto.uomId = entity.uomId;
+    dto.status = entity.status;
+    dto.thumbnail = entity.thumbnail;
+    dto.createdById = entity.createdById;
+    dto.createdAt = entity.createdAt;
+    dto.updatedAt = entity.updatedAt;
+    dto.deletedAt = entity.deletedAt;
+
+    if (entity.createdBy) {
       dto.createdBy = await UserMapper.toDto(entity.createdBy);
-    if (entity.category)
+    }
+    if (entity.category) {
       dto.category = await CategoryMapper.toDto(entity.category);
-    if (entity.uom) dto.uom = await UomMapper.toDto(entity.uom);
+    }
+    if (entity.uom) {
+      dto.uom = await UomMapper.toDto(entity.uom);
+    }
+
+    if (entity.stocks && entity.stocks.length > 0) {
+      dto.stocks = await Promise.all(
+        entity.stocks.map((item) => StockMapper.toDto(item)),
+      );
+    }
     return dto;
   }
 
-  static async toSelectOptionDto(
+  public static async toSelectOptionDto(
     entity: ProductEntity,
   ): Promise<ProductSelectOptionDto> {
-    return Object.assign(new ProductSelectOptionDto(), {
-      id: entity.id,
-      code: entity.code,
-      nameEn: entity.nameEn,
-      nameKh: entity.nameKh,
-    });
+    const dto = new ProductSelectOptionDto();
+
+    dto.id = entity.id;
+    dto.code = entity.code;
+    dto.nameEn = entity.nameEn;
+    dto.nameKh = entity.nameKh;
+
+    return dto;
   }
 
   static toCreateEntity(dto: CreateProductDto): ProductEntity {
-    const entity = this.toUpdateEntity(new ProductEntity(), dto);
+    const entity = new ProductEntity();
+  
+    entity.code = dto.code;
+    entity.nameEn = dto.nameEn;
+    entity.nameKh = dto.nameKh;
+    entity.categoryId = dto.categoryId;
+    entity.uomId = dto.uomId;
+    entity.thumbnail = dto.thumbnail ?? null;
     entity.status = dto.status ?? true;
     entity.createdById = dto.createdById;
+
     return entity;
   }
 
   static toUpdateEntity(
     entity: ProductEntity,
-    dto: UpdateProductDto,
+    dto: UpdateProductRequestDto,
   ): ProductEntity {
-    for (const key of [
-      'code',
-      'nameEn',
-      'nameKh',
-      'categoryId',
-      'uomId',
-      'status',
-      'thumbnail',
-    ] as const) {
-      if (dto[key] !== undefined) Object.assign(entity, { [key]: dto[key] });
-    }
+    
+    entity.code = dto.code;
+    entity.nameEn = dto.nameEn;
+    entity.nameKh = dto.nameKh;
+    entity.categoryId = dto.categoryId;
+    entity.uomId = dto.uomId;
+    entity.thumbnail = dto.thumbnail ?? null;
+    entity.status = dto.status ?? true;
+
     return entity;
   }
 }

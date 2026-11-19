@@ -48,6 +48,13 @@
       available: true,
       permission: 'product-read'
     },
+    {
+      label: 'stock.title',
+      to: '/admin/inventory/stocks',
+      icon: 'bx:data',
+      available: true,
+      permission: 'stock-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 

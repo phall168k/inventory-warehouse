@@ -8,7 +8,12 @@ import type { TableHeader } from '~/types/crud'
   });
 
   const headers: TableHeader[] = [
-    { title: 'product.thumbnail', key: 'thumbnail', width: 110, form: false },
+    { 
+      title: 'product.thumbnail', 
+      key: 'thumbnail', 
+      width: 110, 
+      form: false 
+    },
     { 
       title: 'product.code', 
       key: 'code', 
@@ -84,12 +89,13 @@ import type { TableHeader } from '~/types/crud'
     crud-path="admin/master-data/products"
     module-name="product"
     :dialog-options="{ 
-      width: 850 
+      fullscreen: true,
     }"
   >
-    <template #form="{ formRef, externalErrors }">
+    <template #form="{ formRef, externalErrors, action }">
       <ProductsForm 
         :form-ref="formRef" 
+        :action="action"
         :external-errors="externalErrors" 
       />
     </template>

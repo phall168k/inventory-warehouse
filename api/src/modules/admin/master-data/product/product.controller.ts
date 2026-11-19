@@ -10,8 +10,8 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-product-request.dto';
+import { UpdateProductRequestDto } from './dto/update-product-request.dto';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -32,6 +32,7 @@ import { ApiPaginationResponseDto } from '@/common/pagination/dto/api-pagination
 import { PaginationRequestDto } from '@/common/pagination/dto/pagination-request.dto';
 import { PaginationResponseDto } from '@/common/pagination/dto/pagination-response.dto';
 import { ProductSelectOptionDto } from './dto/product-select-option-response.dto';
+import { Can } from '@nestjs/authorization';
 
 @ApiTags('Products')
 @ApiBearerAuth(SWAGGER_TOKEN_NAME)
@@ -71,7 +72,7 @@ export class ProductController {
   }
 
   @Get('select-options')
-  @Permissions('product-read')
+  @Can.Anyone()
   @ApiOperation({ summary: 'Find all products for select options' })
   @ApiOkResponse({ type: [ProductSelectOptionDto] })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -104,9 +105,10 @@ export class ProductController {
   @ApiInternalServerErrorResponse({ description: 'Server error' })
   public update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateProductDto,
+    @Body() dto: UpdateProductRequestDto,
+    @CurrentUser() user: UserResponseDto,
   ): Promise<ProductResponseDto> {
-    return this.productService.update(id, dto);
+    return this.productService.update(id, dto, user.id);
   }
 
   @Delete(':id')
