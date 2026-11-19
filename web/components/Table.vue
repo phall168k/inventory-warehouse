@@ -25,7 +25,7 @@ import {
   formatValue 
 } from '~/utils/crud'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   headers: TableHeader[]
   pageHeader?: PageHeader
   pageHeaderOptions?: PageHeader
@@ -33,12 +33,19 @@ const props = defineProps<{
   ageHeaderOptions?: PageHeader
   crudPath: string
   moduleName?: string | null
+  showCreateButton?: boolean
+  showEditButton?: boolean
+  showDeleteButton?: boolean
   dialogOptions?: {
     /** Dialog width in pixels. */
     width?: number
     fullscreen?: boolean
   }
-}>()
+}>(), {
+  showCreateButton: true,
+  showEditButton: true,
+  showDeleteButton: true,
+})
 const slots = useSlots()
 const { t, te } = useI18n()
 const translateLabel = (label: string) => te(label) ? t(label) : label
@@ -47,7 +54,10 @@ const canCreate = computed(() => props.moduleName == null || can(`${props.module
 const canView = computed(() => props.moduleName == null || can(`${props.moduleName}-read`))
 const canEdit = computed(() => props.moduleName == null || can(`${props.moduleName}-update`))
 const canDelete = computed(() => props.moduleName == null || can(`${props.moduleName}-delete`))
-const hasRowActions = computed(() => canView.value || canEdit.value || canDelete.value)
+const showCreate = computed(() => props.showCreateButton && canCreate.value)
+const showEdit = computed(() => props.showEditButton && canEdit.value)
+const showDelete = computed(() => props.showDeleteButton && canDelete.value)
+const hasRowActions = computed(() => canView.value || showEdit.value || showDelete.value)
 const {
   fields, 
   rows, 
@@ -115,7 +125,7 @@ defineExpose({ refresh })
            &nbsp; {{ $t('app.refresh') }}
         </el-button>
         <el-button 
-          v-if="canCreate"
+          v-if="showCreate"
           type="primary" 
           :disabled="busy" 
           size="large"
@@ -278,7 +288,7 @@ defineExpose({ refresh })
                       />&nbsp; {{ $t('app.view') }}
                     </el-dropdown-item>
                     <el-dropdown-item 
-                      v-if="canEdit" 
+                      v-if="showEdit" 
                       :disabled="busy" 
                       class="!text-green-600" 
                       @click="openDialog(CrudDialogState.editing, row)"
@@ -289,9 +299,9 @@ defineExpose({ refresh })
                       /> &nbsp; {{ $t('app.edit') }}
                     </el-dropdown-item>
                     <el-dropdown-item 
-                      v-if="canDelete" 
+                      v-if="showDelete" 
                       :disabled="busy" 
-                      :divided="canView || canEdit" 
+                      :divided="canView || showEdit" 
                       class="!text-red-600" 
                       @click="remove(row)"
                     >
@@ -391,7 +401,7 @@ defineExpose({ refresh })
           {{ action === CrudDialogState.viewing ? $t('app.close') : $t('app.cancel') }}
         </el-button>
         <el-button 
-          v-if="action === CrudDialogState.creating ? canCreate : action === CrudDialogState.editing && canEdit" 
+          v-if="action === CrudDialogState.creating ? showCreate : action === CrudDialogState.editing && showEdit" 
           type="primary" 
           :loading="busy" 
           :disabled="!ready" 
