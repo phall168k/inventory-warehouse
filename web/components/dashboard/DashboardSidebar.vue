@@ -135,7 +135,7 @@
             :to="item.to"
             :aria-label="$t(item.label)"
             :aria-current="route.path === item.to ? 'page' : undefined"
-            :title="collapsed ? item.label : undefined"
+            :title="collapsed ? $t(item.label) : undefined"
             class="nav-item"
             :class="route.path === item.to ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50'"
             @click="emit('navigate')"
@@ -147,18 +147,14 @@
             <span class="sidebar-label">{{ $t(item.label)}}</span>
           </NuxtLink>
           <button 
-            v-else t
-            ype="button" 
+            v-else
+            type="button" 
             disabled 
             class="nav-item w-full cursor-not-allowed text-slate-400" 
             :aria-label="`${item.label}, coming soon`" 
             :title="`${item.label} — coming soon`"
           >
-            <el-icon 
-              :size="20"
-            >
-                <component :is="item.icon" />
-            </el-icon>
+            <Icon :name="item.icon" :size="20" />
             <span 
               class="sidebar-label flex flex-1 items-center justify-between gap-2"
             >
@@ -183,9 +179,10 @@
 
 <style scoped>
 .nav-item { display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 16px; border-radius: 10px; font-size: 13px; font-weight: 500; white-space: nowrap; }
-.nav-item :deep(.el-icon) { flex-shrink: 0; }
+.nav-item :deep(.iconify), .nav-item :deep(.el-icon) { flex: none; }
+.collapsed .nav-item { justify-content: center; padding: 0; }
 .sidebar-label { opacity: 1; }
-.collapsed .sidebar-label { opacity: 0; visibility: hidden; pointer-events: none; }
+.collapsed .sidebar-label { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .sidebar-label { transition: opacity 150ms ease, visibility 150ms; }
   .nav-item { transition: background-color 150ms ease, color 150ms ease; }
