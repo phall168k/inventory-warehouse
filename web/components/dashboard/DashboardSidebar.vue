@@ -55,6 +55,13 @@
       available: true,
       permission: 'stock-read'
     },
+    {
+      label: 'stock_movement.title',
+      to: '/admin/inventory/stock-movements',
+      icon: 'boxicons:chart-bar-columns-filled',
+      available: true,
+      permission: 'stock-movement-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 

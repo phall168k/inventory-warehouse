@@ -137,5 +137,13 @@
         "total_stock": "ស្តុកសរុប",
         "total_warehouses": "ឃ្លាំងសរុប",
         "total_products": "ទំនិញសរុប"
+    },
+    "stock_movement": {
+        "title": "ចលនាស្តុក",
+        "description": "តាមដានចលនាស្ដុក",
+        "movement_type": "ប្រភេទចលនា",
+        "reference_type": "ប្រភេទឯកសារយោង",
+        "quantity_change": "ការផ្លាស់ប្តូរបរិមាណ",
+        "balance_after": "សមតុល្យបន្ទាប់ពី"
     }
 }

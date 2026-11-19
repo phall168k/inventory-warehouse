@@ -137,5 +137,24 @@
         "total_stock": "Total stocks",
         "total_warehouses": "Total warehouses",
         "total_products": "Total products"
+    },
+    "stock": {
+        "title": "Stocks",
+        "description": "Manage stocks",
+        "min_stock": "Min stock",
+        "stock_quantity": "Stock quantity",
+        "out_of_stock": "Out of stock",
+        "low_stock": "Low stock",
+        "total_stock": "Total stocks",
+        "total_warehouses": "Total warehouses",
+        "total_products": "Total products"
+    },
+    "stock_movement": {
+        "title": "Stock Movement",
+        "description": "Mornitoring stock movements",
+        "movement_type": "Movement type",
+        "reference_type": "Reference type",
+        "quantity_change": "Quantity change",
+        "balance_after": "Balance after"
     }
 }
