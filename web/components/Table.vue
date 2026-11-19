@@ -138,7 +138,7 @@ defineExpose({ refresh })
         </el-button>
       </div>
     </div>
-
+    <slot name="summary-header"/>
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <form class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4" @submit.prevent="applySearch">
         <el-input 
