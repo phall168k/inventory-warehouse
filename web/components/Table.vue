@@ -377,7 +377,7 @@ defineExpose({ refresh })
         </div>
       </template>
       <el-alert v-if="dialogError" :title="dialogError" type="error" :closable="false" show-icon class="mb-4" />
-      <div v-loading="busy" :aria-busy="busy">
+      <div v-loading="busy" :aria-busy="busy" :class="{ 'min-h-32': busy && !ready }">
         <el-descriptions v-if="action === CrudDialogState.viewing && ready" :column="1" border>
           <el-descriptions-item v-for="header in columns" :key="header.key" :label="translateLabel(header.title)">
             <slot :name="`item.${header.key}`" :item="record" :value="record[header.key]" :viewing="true">
