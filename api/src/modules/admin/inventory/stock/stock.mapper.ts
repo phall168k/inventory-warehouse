@@ -44,6 +44,7 @@ export class StockMapper {
         dto.id = entity.productId;
         dto.code = entity.product.code;
         dto.nameEn = entity.product.nameEn;
+        dto.nameKh = entity.product.nameKh;
         
         return dto;
     }

@@ -5,12 +5,13 @@ import { BasePaginationService } from '@/common/services/base-pagination.service
 import { StockEntity } from './entities/stock.entity';
 import { StockResponseDto } from './dto/stock-response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, ObjectLiteral, Repository } from 'typeorm';
 import { StockMapper } from './stock.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { StockSelectOptionResponseDto } from './dto/stock-select-option-response.dto';
 import { StockSelectOptionFilterReuestDto } from './dto/stock-select-option-filter-request.dto';
 import { StockSummaryResponseDto } from './dto/stock-summary-response.dto';
+import { StockIncreaseRequestDto } from './dto/stock-increase-request.dto';
 
 @Injectable()
 export class StockService extends BasePaginationService<
@@ -34,6 +35,7 @@ export class StockService extends BasePaginationService<
   constructor(
     @InjectRepository(StockEntity)
     private readonly stockRepository: Repository<StockEntity>,
+    private readonly dataSource: DataSource,
   ) {
     super();
   }
@@ -72,15 +74,15 @@ export class StockService extends BasePaginationService<
     try {
       const query = await this.stockRepository.createQueryBuilder('stock')
         .leftJoin('stock.warehouse', 'warehouse')
-        .leftJoin('stock.product', 'product')
+        .innerJoinAndSelect('stock.product', 'product')
         .where('stock.warehouseId = :warehouseId', {
           warehouseId: dto.warehouseId,
         })
-        .andWhere('stock.status =: status', {
+        .andWhere('stock.status = :status', {
           status: true
         });
         if (dto.categoryId) {
-          query.andWhere('stock.product.categoryId = :caategoryId', {
+          query.andWhere('product.categoryId = :categoryId', {
             categoryId: dto.categoryId,
           });
         }
@@ -160,6 +162,32 @@ export class StockService extends BasePaginationService<
       };
     } catch (error) {
       handleError(error);
+    }
+  }
+
+  public async stockIncrease(dto: StockIncreaseRequestDto[], key: keyof StockEntity): Promise<void> {
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        const repository = manager.getRepository(StockEntity);
+
+        for (const item of dto) {
+          const result = await repository.increment(
+            {
+              warehouseId: item.warehouseId,
+              productId: item.productId,
+              status: true,
+            },
+            key,
+            item.quantity,
+          );
+
+          if (!result.affected) {
+            throw new NotFoundException('Stock not found');
+          } 
+        }
+      });
+    } catch (error) {
+      throw error;
     }
   }
 }
