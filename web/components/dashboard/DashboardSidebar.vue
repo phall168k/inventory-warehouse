@@ -62,6 +62,13 @@
       available: true,
       permission: 'stock-movement-read'
     },
+    {
+      label: 'stock_receipt.title',
+      to: '/admin/inventory/stock-receipts',
+      icon: 'uix:stock-on-order',
+      available: true,
+      permission: 'stock-receipt-read'
+    },
     { 
       label: 'Reports', 
       to: '/reports', 

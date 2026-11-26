@@ -149,6 +149,27 @@
         "total_warehouses": "Total warehouses",
         "total_products": "Total products"
     },
+    "stock_receipt": {
+        "duplicate_product": "Each product can only be selected once.",
+        "attachments": "Attachments",
+            "title": "Stock receipts",
+            "description": "Manage stock receipts",
+            "document_number": "Document number",
+            "receipt_date": "Receipt date",
+            "reference_no": "Reference number",
+            "description_field": "Description",
+            "items": "Items",
+            "add_item": "Add item",
+            "remove_item": "Remove item",
+            "quantity": "Quantity",
+            "unit_cost": "Unit cost",
+            "note": "Note",
+            "total_quantity": "Total quantity",
+            "select_warehouse": "Select a warehouse",
+            "select_product": "Select a product",
+            "required": "This field is required",
+            "positive": "Enter a number greater than zero"
+    },
     "stock_movement": {
         "title": "Stock Movement",
         "description": "Mornitoring stock movements",

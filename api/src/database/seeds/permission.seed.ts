@@ -61,4 +61,20 @@ export const permissions = [
             'stock-delete'
         ], 
     },
+    { 
+        name: 'Stock movement', 
+        children: [
+            'stock-read', 
+        ], 
+    },
+    { 
+        name: 'Stock receipt', 
+        children: [
+            'stock-receipt-read', 
+            'stock-receipt-create', 
+            'stock-receipt-update', 
+            'stock-receipt-delete',
+            'stock-receipt-posting'
+        ], 
+    },
 ];

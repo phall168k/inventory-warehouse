@@ -138,6 +138,27 @@
         "total_warehouses": "ឃ្លាំងសរុប",
         "total_products": "ទំនិញសរុប"
     },
+    "stock_receipt": {
+        "duplicate_product": "ផលិតផលនីមួយៗអាចជ្រើសរើសបានតែម្តងប៉ុណ្ណោះ។",
+        "attachments": "ឯកសារភ្ជាប់",
+            "title": "បង្កាន់ដៃទទួលទំនិញ",
+            "description": "គ្រប់គ្រងបង្កាន់ដៃទទួលទំនិញ",
+            "document_number": "លេខឯកសារ",
+            "receipt_date": "កាលបរិច្ឆេទទទួល",
+            "reference_no": "លេខយោង",
+            "description_field": "ការពិពណ៌នា",
+            "items": "មុខទំនិញ",
+            "add_item": "បន្ថែមមុខទំនិញ",
+            "remove_item": "លុបមុខទំនិញ",
+            "quantity": "បរិមាណ",
+            "unit_cost": "តម្លៃឯកតា",
+            "note": "ចំណាំ",
+            "total_quantity": "បរិមាណសរុប",
+            "select_warehouse": "ជ្រើសរើសឃ្លាំង",
+            "select_product": "ជ្រើសរើសទំនិញ",
+            "required": "សូមបំពេញព័ត៌មាននេះ",
+            "positive": "បញ្ចូលលេខធំជាងសូន្យ"
+    },
     "stock_movement": {
         "title": "ចលនាស្តុក",
         "description": "តាមដានចលនាស្ដុក",

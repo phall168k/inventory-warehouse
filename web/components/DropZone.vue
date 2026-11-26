@@ -38,7 +38,9 @@
       stripe
     >
       <template #empty>{{ $t('app.no_data') }}</template>
-      <el-table-column :label="$t('warehouse.file_name')" prop="fileName" />
+      <el-table-column :label="$t('warehouse.file_name')">
+        <template #default="scope">{{ scope.row.originalName || scope.row.fileName }}</template>
+      </el-table-column>
       <el-table-column :label="$t('app.actions')" align="center" width="150">
         <template #default="scope">
           <div class="flex items-center gap-2 justify-center">
@@ -180,15 +182,6 @@ const handleDeleteFile = async (fileName: string) => {
   } catch {
     return
   }
-  try {
-    await useApi(apiPath('delete'), {
-      method: 'delete',
-      query: { bucket: 'images', object: fileName },
-    })
-    updateFiles(files.value.filter(file => file.fileName !== fileName))
-    useMessage($t('upload.deleted'))
-  } catch {
-    useMessage($t('upload.delete_failed'), 'error')
-  }
+  updateFiles(files.value.filter(file => file.fileName !== fileName))
 }
 </script>
