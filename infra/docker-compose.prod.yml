@@ -1,0 +1,180 @@
+services:
+
+  # PostgreSQL
+  postgres-prod:
+    image: postgres:16-alpine
+    container_name: postgres-prod
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      TZ: ${DB_TZ}
+      PGTZ: ${DB_PGTZ}
+    command: ["postgres", "-c", "timezone=${DB_TZ}"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/DB_DATABASE
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - internal_network
+    restart: unless-stopped
+
+  # Redis
+  redis-prod:
+    image: redis:7-alpine
+    container_name: redis-prod
+    environment:
+      REDIS_PASSWORD: ${REIDS_PASSWORD:?SET REDIS_PASSWORD}
+    command:
+      [
+        'sh',
+        '-c',
+        'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+      ]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: 
+        [
+          'CMD-SHELL',
+          'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -q PONG'
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal_network
+    restart: unless-stopped
+
+  # MinIO
+  minio-prod:
+    image: cgr.dev/chainguard/minio:latest
+    container_name: minio-prod
+    enivronment:
+      MINIO_ROOT_USER: stockproadmin
+      MINIO_ROOT_PASSWORD: stockprodev123
+    command: server /data --console-address ':9000'
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test:
+        [
+          'CMD', 
+          'mc',
+          'ready',
+          'local',
+        ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks:
+      - internal_network
+      - external_network
+    restart: unless-stopped
+
+  # API
+  api-prod:
+    build: 
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: api-prod
+    env_file:
+      - ../api/.env
+    expose:
+      - "8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:${API_PORT}/api/health').then((r) => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
+      redis-prod:
+        condition: service_healthy
+      minio-prod:
+        condition: service_healthy
+    networks:
+      - internal_network
+    restart: unless-stopped
+  
+  # app
+  web-prod:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    container_name: web-prod
+    env_file:
+      - ../web/.env
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http:/127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      api-prod:
+        condition: service_healthy
+    networks:
+      - internal_network
+    restart: unless-stopped
+
+  # Nginx
+  nginx-prod:
+    image: nginx:1.27-alpine
+    container_name: nginx-prod
+    environment:
+      NGINX_SERVER_NAME: "${NGINX_SERVER_NAME:-_}"
+      NGINX_CLIENT_BODY_MAX_SIZE: "${NGINX_CLIENT_BODY_MAX_SIZE:-100M}"
+      NGINX_ENVSUBST_FILTER: "^(NGINX_SERVER_NAME|NGINX_CLIENT_BODY_MAX_SIZE)$$"
+    volumes:
+      - ./nginx/default.conf.template:/etc/templates/default.conf.template:ro
+    depneds_on:
+      web-prod:
+        condition: service_healthy
+    networks:
+      - internal_network
+      - external_network
+    restart: unless-stopped
+  
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  internal_network:
+    driver: bridge
+    internal: true
+  external_network:
+    driver: bridge
+
+  
+
