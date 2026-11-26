@@ -5,13 +5,14 @@ import { BasePaginationService } from '@/common/services/base-pagination.service
 import { StockEntity } from './entities/stock.entity';
 import { StockResponseDto } from './dto/stock-response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, ObjectLiteral, Repository } from 'typeorm';
+import { DataSource, FindOptionsRelations, FindOptionsWhere, Not, Repository } from 'typeorm';
 import { StockMapper } from './stock.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { StockSelectOptionResponseDto } from './dto/stock-select-option-response.dto';
 import { StockSelectOptionFilterReuestDto } from './dto/stock-select-option-filter-request.dto';
 import { StockSummaryResponseDto } from './dto/stock-summary-response.dto';
 import { StockIncreaseRequestDto } from './dto/stock-increase-request.dto';
+import { StockStatusEnum } from '../stock-receipt/entities/stock-receipt.entity';
 
 @Injectable()
 export class StockService extends BasePaginationService<
@@ -189,5 +190,56 @@ export class StockService extends BasePaginationService<
     } catch (error) {
       throw error;
     }
+  }
+
+  public async updateStockPostingStatus<
+    I extends {
+      productId: string;
+      quantity: number;
+    },
+    T extends {
+      id: string;
+      warehouseId: string;
+      status: StockStatusEnum;
+      postedById: string;
+      items: I[];
+    }
+  >(
+    repo: Repository<T>,
+    id: string,
+    status: StockStatusEnum,
+    postingById: string,
+    key: keyof StockEntity
+  ): Promise<void> {
+    const entity = await repo.findOne({
+      where: {
+        id,
+        status: Not(StockStatusEnum.CANCELLED),
+      } as FindOptionsWhere<T>,
+      relations: {
+        items: true,
+      } as FindOptionsRelations<T>,
+    });
+
+    if (!entity) {
+      throw new NotFoundException('Stock document not found');
+    }
+
+    if (status !== StockStatusEnum.CANCELLED) {
+      const stockItems: StockIncreaseRequestDto[] = entity.items.map(
+        (item) => ({
+          warehouseId: entity.warehouseId,
+          productId: item.productId,
+          quantity: item.quantity,
+        }),
+      );
+      await this.stockIncrease(stockItems, key);
+    }
+
+    entity.status = status;
+    entity.postedById = postingById;
+
+    await repo.save(entity);
+
   }
 }
