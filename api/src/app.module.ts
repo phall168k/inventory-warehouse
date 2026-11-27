@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { ModulesModule } from './modules/modules.module';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { MinioModule } from './minio/minio.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MinioModule } from './minio/minio.module';
       },
     }),
     AuthorizationModule.forRoot(),
+    RedisModule,
   ],
   controllers: [],
   providers: [],

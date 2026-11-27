@@ -31,6 +31,7 @@ async function bootstrap() {
   app.setGlobalPrefix(process.env.API_PREFIX ?? 'api');
   app.useGlobalInterceptors(new HttpResponseInterceptor());
   setupSwagger(app);
+  app.enableShutdownHooks();
   await app.listen(process.env.API_PORT ?? 8000);
 }
 bootstrap();

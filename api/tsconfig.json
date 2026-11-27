@@ -22,6 +22,7 @@
       "@dto/*": ["./src/common/dto/*"],
       "@http/*": ["./src/common/http/*"],
       "@database/*": ["./src/database/*"],
+      "@redis/*": ["./src/redis/*"],
       "@modules/*": ["./src/modules/*"],
       "@admin/*": ["./src/modules/admin/*"],
       "@auth/*": ["./src/modules/auth/*"],
