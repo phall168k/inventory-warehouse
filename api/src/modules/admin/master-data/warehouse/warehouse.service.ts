@@ -10,6 +10,8 @@ import { WarehouseMapper } from './warehouse.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { WarehouseSelectOptionResponseDto } from './dto/warehouse-select-option-response.dto';
 import { UserResponseDto } from '../../system/user/dto/user-response.dto';
+import { RedisService } from '@/redis/redis.service';
+import { RedisCacheKeys } from '@/redis/constants/redis-cache-keys.constants';
 
 @Injectable()
 export class WarehouseService extends BasePaginationService<WarehouseEntity, WarehouseResponseDto>{
@@ -19,6 +21,7 @@ export class WarehouseService extends BasePaginationService<WarehouseEntity, War
   constructor(
     @InjectRepository(WarehouseEntity)
     private readonly warehouseRepository: Repository<WarehouseEntity>,
+    private readonly redisService: RedisService,
   ) {
     super();
   }
@@ -67,6 +70,9 @@ export class WarehouseService extends BasePaginationService<WarehouseEntity, War
 
   public async findOne(id: string): Promise<WarehouseResponseDto> {
     try {
+      const cacheKey = RedisCacheKeys.WAREHOUSE.DETAIL(id);
+      const cachedWarehouse = await this.redisService.get<WarehouseResponseDto>(cacheKey);
+      if (cachedWarehouse) return cachedWarehouse;
       const entity = await this.warehouseRepository.findOne({
         where: { id },
         relations: {
@@ -75,7 +81,9 @@ export class WarehouseService extends BasePaginationService<WarehouseEntity, War
         },
       });
       if (!entity) throw new NotFoundException('Warehouse not found');
-      return WarehouseMapper.toDto(entity);
+      const mappedWarehouse = await WarehouseMapper.toDto(entity);
+      await this.redisService.set<WarehouseResponseDto>(cacheKey, mappedWarehouse);
+      return mappedWarehouse;
     } catch (error) {
       handleError(error);
     }
@@ -88,6 +96,7 @@ export class WarehouseService extends BasePaginationService<WarehouseEntity, War
 
       entity = WarehouseMapper.toUpdateEntity(entity, dto);
       entity = await this.warehouseRepository.save(entity);
+      await this.redisService.del(RedisCacheKeys.WAREHOUSE.DETAIL(id));
       return WarehouseMapper.toDto(entity);
     } catch (error) {
       handleError(error);
@@ -99,6 +108,7 @@ export class WarehouseService extends BasePaginationService<WarehouseEntity, War
       const entity = await this.warehouseRepository.findOneBy({ id });
       if (!entity) throw new NotFoundException('Warehouse not found');
       await this.warehouseRepository.softDelete(id);
+      await this.redisService.del(RedisCacheKeys.WAREHOUSE.DETAIL(id));
     } catch (error) {
       handleError(error);
     }

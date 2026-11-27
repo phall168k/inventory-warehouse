@@ -15,4 +15,7 @@ export const RedisCacheKeys = {
         DETAIL: (id: string) => `product:detail:${id}`,
         SELECT: 'product:select',
     },
+    WAREHOUSE: {
+        DETAIL: (id: string) => `warehouse:detail:${id}`,
+    },
 }
