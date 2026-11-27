@@ -11,6 +11,9 @@ import { UserMapper } from './user.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { UserSelectOptionResponseDto } from './dto/user-select-option-response.dto';
 import { PasswordHasher } from '@nestjs/authentication';
+import { RedisService } from '@/redis/redis.service';
+import { RedisCacheKeys } from '@/redis/constants/redis-cache-keys.constants';
+import { RedisCacheTTL } from '@/redis/constants/redis-cache-ttl.constants';
 
 @Injectable()
 export class UserService extends BasePaginationService<UserEntity, UserResponseDto>{
@@ -20,8 +23,7 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    private readonly redisService: RedisService,
     private readonly passwordHasher: PasswordHasher,
   ) {
     super();
@@ -60,11 +62,22 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
 
   public async findAllForSelectOptions(): Promise<UserSelectOptionResponseDto[]> {
     try {
-      const entities = await this.userRepository.find();
+      const cacheKey = RedisCacheKeys.USER.SELECT;
 
-      const mappedUsers = Promise.all(
+      const cachedUsers = await this.redisService.get<UserSelectOptionResponseDto[]>(cacheKey);
+
+      if (cachedUsers !== null) return cachedUsers;
+
+      const entities = await this.userRepository.find({
+        where: {
+          isActive: true,
+        },
+      });
+      const mappedUsers = await Promise.all(
         entities.map((item) => UserMapper.toSelectOptionDto(item)),
       );
+
+      await this.redisService.set<UserSelectOptionResponseDto[]>(cacheKey, mappedUsers, RedisCacheTTL.THIRTY_MINUTES);
 
       return mappedUsers;
     } catch (error) {
@@ -74,6 +87,11 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
 
   public async findOne(id: string): Promise<UserResponseDto> {
     try {
+      const cacheKey = RedisCacheKeys.USER.DETAIL(id);
+      const cache = await this.redisService.get<UserResponseDto>(cacheKey);
+      if (cache) {
+        return cache;
+      }
       const entity = await this.userRepository.findOne({
         where: { id },
         relations: {
@@ -83,7 +101,9 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
         },
       });
       if (!entity) throw new NotFoundException('User not found');
-      return await UserMapper.toDtoWithRelationship(entity);
+      const mappedUser = await UserMapper.toDtoWithRelationship(entity);
+      await this.redisService.set<UserResponseDto>(cacheKey, mappedUser);
+      return mappedUser;
     } catch (error) {
       handleError(error);
     }
@@ -126,6 +146,7 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
       if (!entity) throw new NotFoundException();
       entity = UserMapper.toUpdateEntity(entity, dto);
       entity =  await this.userRepository.save(entity);
+      await this.redisService.del(RedisCacheKeys.USER.DETAIL(id));
       return UserMapper.toDtoWithRelationship(entity);
     } catch (error) {
       handleError(error);
@@ -136,7 +157,7 @@ export class UserService extends BasePaginationService<UserEntity, UserResponseD
     try {
       const entity = await this.userRepository.findOneBy({ id });
       if (!entity) throw new NotFoundException('User not found');
-
+      await this.redisService.del(RedisCacheKeys.USER.DETAIL(id));
       await this.userRepository.softDelete(id);
     } catch (error) {
       handleError(error);

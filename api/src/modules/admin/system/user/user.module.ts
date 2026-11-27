@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { RoleEntity } from '../role/entities/role.entity';
 import { AuthSessionEntity } from './entities/auth-session.entity';
+import { RedisModule } from '@/redis/redis.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthSessionEntity } from './entities/auth-session.entity';
       RoleEntity,
       AuthSessionEntity,
     ]),
+    RedisModule,
   ],
   controllers: [UserController],
   providers: [UserService],
