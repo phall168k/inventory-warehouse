@@ -13,6 +13,8 @@ import { ProductMapper } from './product.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { ProductSelectOptionDto } from './dto/product-select-option-response.dto';
 import { StockEntity } from '../../inventory/stock/entities/stock.entity';
+import { RedisService } from '@/redis/redis.service';
+import { RedisCacheKeys } from '@/redis/constants/redis-cache-keys.constants';
 
 @Injectable()
 export class ProductService extends BasePaginationService<
@@ -26,6 +28,7 @@ export class ProductService extends BasePaginationService<
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     private readonly dataSource: DataSource,
+    private readonly redisService: RedisService,
   ) {
     super();
   }
@@ -82,14 +85,18 @@ public async create(
 
   public async findAllForSelectOptions(): Promise<ProductSelectOptionDto[]> {
     try {
+      const cacheKey = RedisCacheKeys.PRODUCT.SELECT;
+      const cachedProducts = await this.redisService.get<ProductSelectOptionDto[]>(cacheKey);
+      if (cachedProducts !== null) return cachedProducts;  
       const entities = await this.productRepository.find({
         where: {
           status: true,
         },
       });
-      const itemsMapped = Promise.all(
+      const itemsMapped = await Promise.all(
         entities.map((item) => ProductMapper.toSelectOptionDto(item)),
       );
+      await this.redisService.set<ProductSelectOptionDto[]>(cacheKey, itemsMapped);
       return itemsMapped;
     } catch (error) {
       handleError(error);
@@ -98,6 +105,9 @@ public async create(
 
   public async findOne(id: string): Promise<ProductResponseDto> {
     try {
+      const cacheKey = RedisCacheKeys.PRODUCT.DETAIL(id);
+      const cachedProduct = await this.redisService.get<ProductResponseDto>(cacheKey);
+      if (cachedProduct) return cachedProduct;
       const entity = await this.productRepository.findOne({
         where: { id },
         relations: {
@@ -108,7 +118,9 @@ public async create(
         },
       });
       if (!entity) throw new NotFoundException('Product not found');
-      return ProductMapper.toDto(entity);
+      const mappedProduct = await ProductMapper.toDto(entity);
+      await this.redisService.set(cacheKey, mappedProduct);
+      return mappedProduct;
     } catch (error) {
       handleError(error);
     }
@@ -158,6 +170,7 @@ public async create(
           if (newStocks.length) await manager.save(StockEntity, newStocks);
           entity.stocks = await manager.find(StockEntity, { where: { productId: id } });
         }
+        await this.redisService.del(RedisCacheKeys.PRODUCT.DETAIL(id), RedisCacheKeys.PRODUCT.SELECT);
         return ProductMapper.toDto(entity);
       });
     } catch (error) {
@@ -170,6 +183,7 @@ public async create(
       const entity = await this.productRepository.findOneBy({ id });
       if (!entity) throw new NotFoundException('Product not found');
       await this.productRepository.softDelete(id);
+      await this.redisService.del(RedisCacheKeys.PRODUCT.DETAIL(id), RedisCacheKeys.PRODUCT.SELECT);
     } catch (error) {
       handleError(error);
     }

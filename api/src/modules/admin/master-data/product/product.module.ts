@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { StockModule } from '../../inventory/stock/stock.module';
 import { StockEntity } from '../../inventory/stock/entities/stock.entity';
+import { RedisModule } from '@/redis/redis.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { StockEntity } from '../../inventory/stock/entities/stock.entity';
       StockEntity,
     ]),
     StockModule,
+    RedisModule,
   ],
   controllers: [ProductController],
   providers: [ProductService],

@@ -11,4 +11,8 @@ export const RedisCacheKeys = {
         DETAIL: (id: string) => `uom:detail:${id}`,
         SELECT: 'uom:select',
     },
+    PRODUCT: {
+        DETAIL: (id: string) => `product:detail:${id}`,
+        SELECT: 'product:select',
+    },
 }
