@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { CategoryMapper } from './category.mapper';
 import { handleError } from '@/common/utils/handle-error.util';
 import { CategorySelectOptionDto } from './dto/category-select-option-response.dto';
+import { RedisService } from '@/redis/redis.service';
+import { RedisCacheKeys } from '@/redis/constants/redis-cache-keys.constants';
 
 @Injectable()
 export class CategoryService extends BasePaginationService<CategoryEntity, CategoryResponseDto>{
@@ -18,6 +20,7 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
   constructor(
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
+    private readonly redisService: RedisService,
   ) {
     super();
   }
@@ -42,14 +45,20 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
 
   public async findAllForSelectOptions(): Promise<CategorySelectOptionDto[]> {
     try {
+      const cacheKey = RedisCacheKeys.CATEGORY.SELECT;
+      const cachedCategories = await this.redisService.get<CategorySelectOptionDto[]>(cacheKey);
+     
+      if (cachedCategories !== null) return cachedCategories;
+
       const entities = await this.categoryRepository.find({
         where: {
           status: true,
         },
       });
-      const itemsMapped = Promise.all(
+      const itemsMapped = await Promise.all(
         entities.map((item) => CategoryMapper.toSelectOptionDto(item)),
       );
+      await this.redisService.set<CategorySelectOptionDto[]>(cacheKey, itemsMapped);
       return itemsMapped;
     } catch (error) {
       handleError(error);
@@ -58,6 +67,11 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
 
   public async findOne(id: string): Promise<CategoryResponseDto> {
     try {
+      const cacheKey = RedisCacheKeys.CATEGORY.DETAIL(id);
+      const cachedCategory = await this.redisService.get<CategoryResponseDto>(cacheKey);
+      
+      if (cachedCategory) return cachedCategory;
+
       const entity = await this.categoryRepository.findOne({
         where: { id },
         relations: {
@@ -65,7 +79,12 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
         },
       });
       if (!entity) throw new NotFoundException('Category not found');
-      return CategoryMapper.toDto(entity);
+
+      const mappedCategory = await CategoryMapper.toDto(entity);
+
+      await this.redisService.set<CategoryResponseDto>(cacheKey, mappedCategory);
+
+      return mappedCategory;
     } catch (error) {
       handleError(error);
     }
@@ -77,6 +96,7 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
       if (!entity) throw new NotFoundException('Category not found');
       entity = CategoryMapper.toUpdateEntity(entity, dto);
       entity = await this.categoryRepository.save(entity);
+      await this.redisService.del(RedisCacheKeys.CATEGORY.DETAIL(id), RedisCacheKeys.CATEGORY.SELECT);
       return CategoryMapper.toDto(entity);
     } catch (error) {
       handleError(error);
@@ -88,6 +108,7 @@ export class CategoryService extends BasePaginationService<CategoryEntity, Categ
       const entity = await this.categoryRepository.findOneBy({ id });
       if (!entity) throw new NotFoundException('Category not found'); 
       await this.categoryRepository.softDelete(id);
+      await this.redisService.del(RedisCacheKeys.CATEGORY.DETAIL(id), RedisCacheKeys.CATEGORY.SELECT);
     } catch (error) {
       handleError(error);
     }
