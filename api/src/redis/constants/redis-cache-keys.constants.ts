@@ -7,4 +7,8 @@ export const RedisCacheKeys = {
         DETAIL: (id: string) => `category:detail:${id}`,
         SELECT: 'category:select',
     },
+    UOM: {
+        DETAIL: (id: string) => `uom:detail:${id}`,
+        SELECT: 'uom:select',
+    },
 }
