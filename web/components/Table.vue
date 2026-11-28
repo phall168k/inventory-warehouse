@@ -299,7 +299,7 @@ defineExpose({ refresh })
                       /> &nbsp; {{ $t('app.edit') }}
                     </el-dropdown-item>
                     <!-- Action buttons customization -->
-                    <slot name="action-button" :item="{ row }"/>
+                    <slot name="action-button" :item="row"/>
                     <el-dropdown-item 
                       v-if="showDelete" 
                       :disabled="busy" 
