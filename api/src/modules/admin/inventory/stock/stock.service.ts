@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStockRequestDto } from './dto/create-stock-request.dto';
 import { UpdateStockRequestDto } from './dto/update-stock-request.dto';
 import { BasePaginationService } from '@/common/services/base-pagination.service';
@@ -13,6 +13,7 @@ import { StockSelectOptionFilterReuestDto } from './dto/stock-select-option-filt
 import { StockSummaryResponseDto } from './dto/stock-summary-response.dto';
 import { StockIncreaseRequestDto } from './dto/stock-increase-request.dto';
 import { StockStatusEnum } from '../stock-receipt/entities/stock-receipt.entity';
+import { StockMovementService } from '../stock-movement/stock-movement.service';
 
 @Injectable()
 export class StockService extends BasePaginationService<
@@ -37,6 +38,7 @@ export class StockService extends BasePaginationService<
     @InjectRepository(StockEntity)
     private readonly stockRepository: Repository<StockEntity>,
     private readonly dataSource: DataSource,
+    private readonly stockMovementService: StockMovementService,
   ) {
     super();
   }
@@ -225,14 +227,21 @@ export class StockService extends BasePaginationService<
       throw new NotFoundException('Stock document not found');
     }
 
-    if (status !== StockStatusEnum.CANCELLED) {
+    if (status === StockStatusEnum.POSTED) {
+      if (!entity.items?.length) {
+        throw new BadRequestException(
+          'Stock document must contain at least one item',
+        );
+      }
+
       const stockItems: StockIncreaseRequestDto[] = entity.items.map(
-        (item) => ({
+        ({ productId, quantity }) => ({
           warehouseId: entity.warehouseId,
-          productId: item.productId,
-          quantity: item.quantity,
+          productId,
+          quantity: Number(quantity),
         }),
       );
+
       await this.stockIncrease(stockItems, key);
     }
 
