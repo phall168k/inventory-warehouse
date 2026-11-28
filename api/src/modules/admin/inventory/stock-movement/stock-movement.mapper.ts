@@ -46,7 +46,6 @@ export class StockMovementMapper {
         entity.referenceType = dto.referenceType;
         entity.referenceId = dto.referenceId;
         entity.quantityChange = dto.quantityChange;
-        entity.balanceAfter = dto.balanceAfter;
         entity.createdById = dto.createdById;
 
         return entity;

@@ -40,10 +40,6 @@ export class CreateStockMovementRequestDto {
     @IsNotEmpty()
     quantityChange: number;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    balanceAfter: number;
-
     @ApiHideProperty()
     createdById: string;
 }
