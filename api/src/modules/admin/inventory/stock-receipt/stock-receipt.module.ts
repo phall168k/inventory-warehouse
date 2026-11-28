@@ -6,6 +6,7 @@ import { StockReceiptEntity } from './entities/stock-receipt.entity';
 import { StockReceiptItemEntity } from './entities/stock-receipt-item.entity';
 import { StockMovementModule } from '../stock-movement/stock-movement.module';
 import { StockModule } from '../stock/stock.module';
+import { RedisModule } from '@/redis/redis.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { StockModule } from '../stock/stock.module';
     ]),
     StockMovementModule,
     StockModule,
+    RedisModule,
   ],
   controllers: [StockReceivingController],
   providers: [StockReceiptService],

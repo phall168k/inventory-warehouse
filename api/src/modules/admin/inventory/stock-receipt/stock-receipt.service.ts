@@ -14,6 +14,9 @@ import { StockMovementService } from '../stock-movement/stock-movement.service';
 import { StockService } from '../stock/stock.service';
 import { StockIncreaseRequestDto } from '../stock/dto/stock-increase-request.dto';
 import { StockPostingRequestDto } from '../stock/dto/stock-posting-request.dto';
+import { RedisCacheKeys } from '@/redis/constants/redis-cache-keys.constants';
+import { RedisService } from '@/redis/redis.service';
+import { StockMovementTypeEnum } from '../stock-movement/entities/stock-movement.entity';
 
 @Injectable()
 export class StockReceiptService extends BasePaginationService<StockReceiptEntity, StockReceiptResponseDto> {
@@ -43,6 +46,7 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
     private readonly stockReceiptItemRepository: Repository<StockReceiptItemEntity>,
     private readonly stockMovementService: StockMovementService,
     private readonly stockService: StockService,
+    private readonly redisService: RedisService,
   ) {
     super();
   }
@@ -69,10 +73,16 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
 
   public async findAllForSelectOption(): Promise<StockReceiptSelectOptionResponseDto[]> {
     try {
+      const cacheKey = RedisCacheKeys.STOCK_RECEIPT.SELECT;
+      const cachedStockReceipts = await this.redisService.get<StockReceiptSelectOptionResponseDto[]>(cacheKey);
+     
+      if (cachedStockReceipts !== null) return cachedStockReceipts;
+
       const entities = await this.stockReceiptRepository.find();
       const itemsMapped = await Promise.all(
         entities.map((item) => StockReceiptMapper.toSelectOptionDto(item)),
       );
+      await this.redisService.set<StockReceiptSelectOptionResponseDto[]>(cacheKey, itemsMapped);
       return itemsMapped;
     } catch (error) {
       handleError(error);
@@ -81,6 +91,11 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
 
   public async findOne(id: string): Promise<StockReceiptResponseDto> {
     try {
+      const cacheKey = RedisCacheKeys.STOCK_RECEIPT.DETAIL(id);
+      const cachedStockReceipt = await this.redisService.get<StockReceiptResponseDto>(cacheKey);
+      
+      if (cachedStockReceipt) return cachedStockReceipt;
+
       const entity = await this.stockReceiptRepository.findOne({
         where: { id },
         relations: {
@@ -93,7 +108,9 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
         },
       });
       if (!entity) throw new NotFoundException('Stock receipt not found');
-      return StockReceiptMapper.toDto(entity);
+      const mappedStockReceipt = await StockReceiptMapper.toDto(entity);
+      await this.redisService.set<StockReceiptResponseDto>(cacheKey, mappedStockReceipt);
+      return mappedStockReceipt;
     } catch (error) {
       handleError(error);
     }
@@ -118,6 +135,7 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
       }
       entity = StockReceiptMapper.toUpdateEntity(entity, dto);
       entity = await this.stockReceiptRepository.save(entity);
+      await this.redisService.del(RedisCacheKeys.STOCK_RECEIPT.DETAIL(id), RedisCacheKeys.STOCK_RECEIPT.SELECT);
       return StockReceiptMapper.toDto(entity);
     } catch (error) {
       handleError(error);
@@ -129,6 +147,7 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
       const entity = await this.stockReceiptRepository.findOneBy({ id });
       if (!entity) throw new NotFoundException('Stock receipt not found');
       await this.stockReceiptRepository.softDelete(id);
+      await this.redisService.del(RedisCacheKeys.STOCK_RECEIPT.DETAIL(id), RedisCacheKeys.STOCK_RECEIPT.SELECT);
     } catch (error) {
       handleError(error);
     }
@@ -141,6 +160,9 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
           id: dto.id,
           status: Not(StockStatusEnum.CANCELLED),
         },
+        relations: {
+          items: true,
+        },
       });
       if (!entity) throw new NotFoundException('Stock receipt not found');
       await this.stockService.updateStockPostingStatus(
@@ -150,6 +172,19 @@ export class StockReceiptService extends BasePaginationService<StockReceiptEntit
         dto.postedById, 
         'receiveQuantity'
       );
+      if (dto.status !== 'CANCELLED') {
+        const itemDto = entity.items.map((item) => ({
+          productId: item.productId,
+          warehouseId: entity.warehouseId,
+          movementType: StockMovementTypeEnum.RECEIPT,
+          referenceType: 'Stock Receipt',
+          referenceId: entity.id,
+          quantityChange: item.quantity,
+          createdById: dto.postedById,
+        }));
+        await this.stockMovementService.create(itemDto);
+      }
+      await this.redisService.del(RedisCacheKeys.STOCK_RECEIPT.DETAIL(dto.id));
     } catch (error) {
       handleError(error);
     }
